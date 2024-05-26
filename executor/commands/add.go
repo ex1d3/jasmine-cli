@@ -22,8 +22,17 @@ func Add(
 	args []string,
 ) [1]string {
 	collection := args[1]
+	rawValues := args[2]
+
+	openBracketIndex := strings.Index(rawValues, "(")
+	closeBracketIndex := strings.Index(rawValues, ")")
+
+	if (openBracketIndex == -1) || (closeBracketIndex == -1) {
+		return utils.FResult("object constructor for new object not found")
+	}
+
 	values := strings.Split(
-		args[2][strings.Index(args[2], "(")+1:strings.Index(args[2], ")")],
+		rawValues[openBracketIndex+1:closeBracketIndex],
 		";",
 	)
 
