@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"nolono-cli/domain"
 	"nolono-cli/executor/collections"
-	"nolono-cli/executor/commands/errors"
+	"nolono-cli/executor/commands/internal_errors"
 	"nolono-cli/executor/utils"
 	"nolono-cli/storage"
 	"strconv"
@@ -75,7 +75,7 @@ func Add(
 		}
 	default:
 		{
-			return utils.FResult(errors.InvalidCollection(collection))
+			return utils.FResult(internal_errors.InvalidCollection(collection))
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package errors
+package internal_errors
 
 import "fmt"
 
