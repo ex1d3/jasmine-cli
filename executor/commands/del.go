@@ -1,13 +1,14 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"nolono-cli/executor/collections"
-	"nolono-cli/executor/utils"
+	"nolono-cli/executor/commands/internal_errors"
 	"nolono-cli/storage"
 )
 
-func Del(args []string) [1]string {
+func Del(args []string) (string, error) {
 	collection := args[1]
 	target := args[2]
 
@@ -15,7 +16,7 @@ func Del(args []string) [1]string {
 	case collections.SRC:
 		{
 			if !storage.Src[target] {
-				return utils.FResult(
+				return "", errors.New(
 					invalidTargetForCollection(target, collection),
 				)
 			}
@@ -27,16 +28,22 @@ func Del(args []string) [1]string {
 	case collections.TX:
 		{
 			if _, ok := storage.Tx[target]; !ok {
-				return utils.FResult(
+				return "", errors.New(
 					invalidTargetForCollection(target, collection),
 				)
 			}
 
 			delete(storage.Tx, target)
 		}
+	default:
+		{
+			return "", errors.New(
+				internal_errors.InvalidCollection(collection),
+			)
+		}
 	}
 
-	return utils.FResult(nullStoragePointer(target))
+	return nullStoragePointer(target), nil
 }
 
 func nullStoragePointer(source string) string {
