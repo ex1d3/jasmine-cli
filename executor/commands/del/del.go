@@ -39,7 +39,7 @@ func delSrc(target string) (string, error) {
 
 	delete(storage.Src, target)
 
-	return nullStoragePointer(target), nil
+	return storage.NullStoragePointer(target), nil
 }
 
 func delTx(target string) (string, error) {
@@ -51,11 +51,7 @@ func delTx(target string) (string, error) {
 
 	delete(storage.Tx, target)
 
-	return nullStoragePointer(target), nil
-}
-
-func nullStoragePointer(source string) string {
-	return fmt.Sprintf("%s => null", source)
+	return storage.NullStoragePointer(target), nil
 }
 
 func invalidTargetForCollection(target string, collection string) string {
