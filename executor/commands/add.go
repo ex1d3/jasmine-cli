@@ -16,7 +16,11 @@ import (
 //
 // > add tx (adam;20)
 // > add src (adam)
-func Add(args [3]string) [1]string {
+func Add(
+	// args param length is actually gonna be pre-checked in #ExecuteCall() func, so
+	// nevermind about this unspecified slice size
+	args []string,
+) [1]string {
 	collection := args[1]
 	values := strings.Split(
 		args[2][strings.Index(args[2], "(")+1:strings.Index(args[2], ")")],
