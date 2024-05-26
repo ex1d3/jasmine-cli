@@ -15,25 +15,11 @@ func Del(args []string) (string, error) {
 	switch collection {
 	case collections.SRC:
 		{
-			if !storage.Src[target] {
-				return "", errors.New(
-					invalidTargetForCollection(target, collection),
-				)
-			}
-
-			delete(storage.Src, target)
-
-			break
+			return delSrc(target)
 		}
 	case collections.TX:
 		{
-			if _, ok := storage.Tx[target]; !ok {
-				return "", errors.New(
-					invalidTargetForCollection(target, collection),
-				)
-			}
-
-			delete(storage.Tx, target)
+			return delTx(target)
 		}
 	default:
 		{
@@ -42,6 +28,28 @@ func Del(args []string) (string, error) {
 			)
 		}
 	}
+}
+
+func delSrc(target string) (string, error) {
+	if !storage.Src[target] {
+		return "", errors.New(
+			invalidTargetForCollection(target, collections.SRC),
+		)
+	}
+
+	delete(storage.Src, target)
+
+	return nullStoragePointer(target), nil
+}
+
+func delTx(target string) (string, error) {
+	if _, ok := storage.Tx[target]; !ok {
+		return "", errors.New(
+			invalidTargetForCollection(target, collections.TX),
+		)
+	}
+
+	delete(storage.Tx, target)
 
 	return nullStoragePointer(target), nil
 }
@@ -52,7 +60,7 @@ func nullStoragePointer(source string) string {
 
 func invalidTargetForCollection(target string, collection string) string {
 	return fmt.Sprintf(
-		"Invalid target for collection '%s' (%s)",
+		"invalid target for collection '%s' (%s)",
 		collection,
 		target,
 	)
