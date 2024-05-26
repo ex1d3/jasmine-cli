@@ -9,12 +9,20 @@ import (
 func TestAddSrc(t *testing.T) {
 	result := Add([]string{"add", "src", "(adam)"})
 
+	t.Log(result)
+
 	if (len(result) != 1) || (result[0] != "adam") {
 		t.Fatal("Invalid return value")
 	}
 
 	if !storage.Src["adam"] {
 		t.Fatal("Source does not inserted into storage")
+	}
+
+	result = Add([]string{"add", "src", "ben"})
+
+	if result[0] != "object constructor for new object not found" {
+		t.Fatal("Invalid call semantic not handled")
 	}
 }
 
