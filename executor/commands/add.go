@@ -29,7 +29,7 @@ func Add(
 
 	if (openBracketIndex == -1) || (closeBracketIndex == -1) {
 		return "", errors.New(
-			"object constructor for 'add' command call not found",
+			"object constructor not found",
 		)
 	}
 
@@ -39,49 +39,62 @@ func Add(
 	)
 
 	if len(values) == 1 && values[0] == "" {
-		return "", errors.New("empty object constructor")
+		return "", errors.New("object constructor is empty")
 	}
 
 	switch collection {
 	case collections.SRC:
 		{
-			if len(values) != 1 {
-				return "", errors.New(invalidValuesAmount(collection, 1, len(values)))
-			}
-
-			storage.Src[values[0]] = true
-
-			return values[0], nil
+			return addSrc(values)
 		}
 	case collections.TX:
 		{
-			if len(values) != 2 {
-				return "", errors.New(
-					invalidValuesAmount(collection, 2, len(values)),
-				)
-			}
-
-			source := values[0]
-			amount, err := strconv.ParseFloat(values[1], 32)
-
-			if err != nil {
-				return "", errors.New(invalidElementForTx("amount", amount))
-			}
-
-			if !storage.Src[source] {
-				return "", errors.New(invalidElementForTx("source", source))
-			}
-
-			id := strconv.FormatInt(time.Now().UnixMicro(), 10)
-			storage.Tx[id] = domain.NewTx(source, float32(amount))
-
-			return storage.Tx[id].ToStr(id), nil
+			return addTx(values)
 		}
 	default:
 		{
-			return "", errors.New(internal_errors.InvalidCollection(collection))
+			return "", errors.New(
+				internal_errors.InvalidCollection(collection),
+			)
 		}
 	}
+}
+
+func addSrc(values []string) (string, error) {
+	if len(values) != 1 {
+		return "", errors.New(
+			invalidValuesAmount(collections.SRC, 1, len(values)),
+		)
+	}
+
+	name := values[0]
+	storage.Src[name] = true
+
+	return name, nil
+}
+
+func addTx(values []string) (string, error) {
+	if len(values) != 2 {
+		return "", errors.New(
+			invalidValuesAmount(collections.TX, 2, len(values)),
+		)
+	}
+
+	source := values[0]
+	amount, err := strconv.ParseFloat(values[1], 32)
+
+	if err != nil {
+		return "", errors.New(invalidElementForTx("amount", amount))
+	}
+
+	if !storage.Src[source] {
+		return "", errors.New(invalidElementForTx("source", source))
+	}
+
+	id := strconv.FormatInt(time.Now().UnixMicro(), 10)
+	storage.Tx[id] = domain.NewTx(source, float32(amount))
+
+	return storage.Tx[id].ToStr(id), nil
 }
 
 func invalidValuesAmount(collection string, expected int, received int) string {
