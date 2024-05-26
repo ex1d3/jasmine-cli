@@ -1,33 +1,57 @@
 package commands
 
 import (
-	"nolono-cli/storage"
 	"strings"
 	"testing"
 )
 
-func TestInvalidSrcDelTarget(t *testing.T) {
-	t.Log(storage.Src)
-
-	_, err := Del(strings.Split("del src invalid", " "))
+func TestDelNonExistingSrc(t *testing.T) {
+	result, err := Del(strings.Split("del src invalid", " "))
 
 	if err == nil {
-		t.Fatal("Invalid target 'del' call execution not pervented")
+		t.Fatal("deletion of non existing src not pervented")
+	}
+
+	if result != "" {
+		t.Fatal("unexpected return value")
 	}
 }
 
-func TestInvalidTxDelTarget(t *testing.T) {
-	_, err := Del(strings.Split("del tx invalid", " "))
+func TestDelNonExistingTx(t *testing.T) {
+	result, err := Del(strings.Split("del tx invalid", " "))
 
 	if err == nil {
-		t.Fatal("Invalid target 'del' call execution not pervented")
+		t.Fatal("deletion of non existing src not pervented")
+	}
+
+	if result != "" {
+		t.Fatal("unexpected return value")
 	}
 }
 
-func TestInvalidDelCollection(t *testing.T) {
-	_, err := Del(strings.Split("del unknown_collection id", " "))
+func TestDelElementFromNonexistingCollection(t *testing.T) {
+	result, err := Del(strings.Split("del unknown_collection id", " "))
 
 	if err == nil {
-		t.Fatal("Invalid collection 'del' call execution not pervented")
+		t.Fatal(
+			"calling 'del' command on " +
+				"non existing collection is not pervented",
+		)
+	}
+
+	if result != "" {
+		t.Fatal("unexpected return value")
+	}
+}
+
+func TestDelWithUnexpectedArgs(t *testing.T) {
+	result, err := Del(strings.Split("del tx id invalid_arg another_arg", " "))
+
+	if err == nil {
+		t.Fatal("calling 'del' command with unexpecting args is not pervented")
+	}
+
+	if result != "" {
+		t.Fatal("unexpected return value")
 	}
 }
