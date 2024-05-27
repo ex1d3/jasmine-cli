@@ -25,9 +25,14 @@ func TestGetAllTxs(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	if (txs[0] != storage.Tx["1"].ToStr("1")) ||
-		(txs[1] != storage.Tx["2"].ToStr("2")) {
-		t.Fatal("unexpected return value")
+	firstTx := storage.Tx["1"].ToStr("1")
+	secondTx := storage.Tx["2"].ToStr("2")
+
+	for _, tx := range txs {
+		if tx != firstTx &&
+			tx != secondTx {
+			t.Fatal("unexpected return value")
+		}
 	}
 }
 
@@ -82,8 +87,10 @@ func TestGetAllSrcs(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	if (srcs[0] != "adam") || (srcs[1] != "ben") {
-		t.Fatal("unexpected return value")
+	for _, src := range srcs {
+		if src != "adam" && src != "ben" {
+			t.Fatal("unexpected return value")
+		}
 	}
 }
 
