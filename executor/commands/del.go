@@ -12,7 +12,7 @@ import (
 func Del(args []string) (string, error) {
 	if len(args) != 2 {
 		return "", errors.New(
-			internal_errors.InvalidArgsCount("add", "2", len(args)),
+			internal_errors.InvalidArgsCount("del", "2", len(args)),
 		)
 	}
 
