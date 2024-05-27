@@ -8,9 +8,16 @@ import (
 	"nolono-cli/storage"
 )
 
+// example args silces: [tx 1] or [src adam]
 func Del(args []string) (string, error) {
-	collection := args[1]
-	target := args[2]
+	if len(args) != 2 {
+		return "", errors.New(
+			internal_errors.InvalidArgsCount("add", "2", len(args)),
+		)
+	}
+
+	collection := args[0]
+	target := args[1]
 
 	switch collection {
 	case collections.SRC:

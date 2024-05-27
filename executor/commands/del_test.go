@@ -6,7 +6,7 @@ import (
 )
 
 func TestDelNonExistingSrc(t *testing.T) {
-	result, err := Del(strings.Split("del src invalid", " "))
+	result, err := Del(strings.Split("src invalid", " "))
 
 	if err == nil {
 		t.Fatal("deletion of non existing src not pervented")
@@ -18,7 +18,7 @@ func TestDelNonExistingSrc(t *testing.T) {
 }
 
 func TestDelNonExistingTx(t *testing.T) {
-	result, err := Del(strings.Split("del tx invalid", " "))
+	result, err := Del(strings.Split("tx invalid", " "))
 
 	if err == nil {
 		t.Fatal("deletion of non existing src not pervented")
@@ -30,7 +30,7 @@ func TestDelNonExistingTx(t *testing.T) {
 }
 
 func TestDelElementFromNonexistingCollection(t *testing.T) {
-	result, err := Del(strings.Split("del unknown_collection id", " "))
+	result, err := Del(strings.Split("unknown_collection id", " "))
 
 	if err == nil {
 		t.Fatal(
@@ -45,7 +45,7 @@ func TestDelElementFromNonexistingCollection(t *testing.T) {
 }
 
 func TestDelWithUnexpectedArgs(t *testing.T) {
-	result, err := Del(strings.Split("del tx id invalid_arg another_arg", " "))
+	result, err := Del(strings.Split("tx id invalid_arg 123 another_arg", " "))
 
 	if err == nil {
 		t.Fatal("calling 'del' command with unexpecting args is not pervented")
