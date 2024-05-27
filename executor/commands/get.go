@@ -1,17 +1,26 @@
 package commands
 
 import (
+	"errors"
 	"nolono-cli/executor/collections"
 	"nolono-cli/executor/commands/internal_errors"
 	"nolono-cli/storage"
 )
 
 func Get(args []string) ([]string, error) {
-	collection := args[1]
+	collection := args[0]
 	params := GetParams{}
 
-	if len(args) == 3 {
-		params.Target = args[2]
+	argsLen := len(args)
+
+	if argsLen < 1 || argsLen > 2 {
+		return []string{}, errors.New(
+			internal_errors.InvalidArgsCount("add", "2", len(args)),
+		)
+	}
+
+	if len(args) == 2 {
+		params.Target = args[1]
 	}
 
 	switch collection {

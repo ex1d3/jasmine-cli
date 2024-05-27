@@ -15,7 +15,7 @@ func TestGetAllTxs(t *testing.T) {
 	storage.Tx["1"] = domain.NewTx("adam", 200)
 	storage.Tx["2"] = domain.NewTx("adam", 30)
 
-	txs, err := Get(strings.Split("get tx", " "))
+	txs, err := Get(strings.Split("tx", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -42,7 +42,7 @@ func TestGetExistingTx(t *testing.T) {
 	storage.Src["ben"] = true
 	storage.Tx[txId] = domain.NewTx("ben", 20)
 
-	txs, err := Get(strings.Split("get tx 3", " "))
+	txs, err := Get(strings.Split("tx 3", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -60,7 +60,7 @@ func TestGetExistingTx(t *testing.T) {
 func TestGetNonExistingTx(t *testing.T) {
 	storage.ClearTx()
 
-	txs, err := Get(strings.Split("get tx 1", " "))
+	txs, err := Get(strings.Split("tx 1", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -77,7 +77,7 @@ func TestGetAllSrcs(t *testing.T) {
 	storage.Src["adam"] = true
 	storage.Src["ben"] = true
 
-	srcs, err := Get(strings.Split("get src", " "))
+	srcs, err := Get(strings.Split("src", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -99,7 +99,7 @@ func TestGetExistingSrc(t *testing.T) {
 
 	storage.Src["adam"] = true
 
-	src, err := Get(strings.Split("get src adam", " "))
+	src, err := Get(strings.Split("src adam", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -117,7 +117,7 @@ func TestGetExistingSrc(t *testing.T) {
 func TestGetNonExistingSrc(t *testing.T) {
 	storage.ClearSrc()
 
-	src, err := Get(strings.Split("get src adam", " "))
+	src, err := Get(strings.Split("src adam", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
