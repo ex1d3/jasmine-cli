@@ -7,7 +7,7 @@ import (
 )
 
 func TestAddValidSrc(t *testing.T) {
-	result, err := Add(strings.Split("add src (adam)", " "))
+	result, err := Add(strings.Split("src (adam)", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -25,7 +25,7 @@ func TestAddValidSrc(t *testing.T) {
 func TestAddValidTx(t *testing.T) {
 	storage.Src["adam"] = true
 
-	result, err := Add(strings.Split("add tx (adam;200)", " "))
+	result, err := Add(strings.Split("tx (adam;200)", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -43,7 +43,7 @@ func TestAddValidTx(t *testing.T) {
 }
 
 func TestAddTxWithInvalidSrc(t *testing.T) {
-	result, err := Add(strings.Split("add tx (invalid_src;200)", " "))
+	result, err := Add(strings.Split("tx (invalid_src;200)", " "))
 
 	if err == nil {
 		t.Fatal("adding transaction with invalid src is not prevented")
@@ -55,7 +55,7 @@ func TestAddTxWithInvalidSrc(t *testing.T) {
 }
 
 func TestAddTxWithInvalidObjectConstructor(t *testing.T) {
-	result, err := Add(strings.Split("add tx (adam;200;unexpected_arg)", " "))
+	result, err := Add(strings.Split("tx (adam;200;unexpected_arg)", " "))
 
 	if err == nil {
 		t.Fatal(
@@ -70,7 +70,7 @@ func TestAddTxWithInvalidObjectConstructor(t *testing.T) {
 }
 
 func TestAddSrcWithInvalidObjectConstructor(t *testing.T) {
-	result, err := Add(strings.Split("add src (adam;unexpected_arg)", " "))
+	result, err := Add(strings.Split("src (adam;unexpected_arg)", " "))
 
 	if err == nil {
 		t.Fatal(
@@ -85,7 +85,7 @@ func TestAddSrcWithInvalidObjectConstructor(t *testing.T) {
 }
 
 func TestAddWithoutObjectConstructor(t *testing.T) {
-	result, err := Add(strings.Split("add src adam", " "))
+	result, err := Add(strings.Split("src adam", " "))
 
 	if err == nil {
 		t.Fatal("adding without object constructor is not prevented")
@@ -97,7 +97,7 @@ func TestAddWithoutObjectConstructor(t *testing.T) {
 }
 
 func TestAddWithEmptyObjectConstructor(t *testing.T) {
-	result, err := Add(strings.Split("add src ()", " "))
+	result, err := Add(strings.Split("src ()", " "))
 
 	if err == nil {
 		t.Fatal("adding with empty object constructor is not prevented")
@@ -109,10 +109,22 @@ func TestAddWithEmptyObjectConstructor(t *testing.T) {
 }
 
 func TestAddToInvalidCollection(t *testing.T) {
-	result, err := Add(strings.Split("add invalid_collection adam", " "))
+	result, err := Add(strings.Split("invalid_collection adam", " "))
 
 	if err == nil {
 		t.Fatal("adding object to invalid collection is not prevented")
+	}
+
+	if result != "" {
+		t.Fatal("unexpected return value")
+	}
+}
+
+func TestInvalidArgsCount(t *testing.T) {
+	result, err := Add(strings.Split("invalid_collection invalid_arg (adam)", " "))
+
+	if err == nil {
+		t.Fatal("calling 'add' command with invalid args count is not prevented")
 	}
 
 	if result != "" {

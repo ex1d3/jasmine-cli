@@ -12,17 +12,18 @@ import (
 	"time"
 )
 
-// example calls:
-//
-// > add tx (adam;20)
-// > add src (adam)
 func Add(
-	// args param length is actually gonna be pre-checked in #ExecuteCall() func, so
-	// nevermind about this unspecified slice size
+	// example args slice: "tx (adam;20)" or "src (adam)"
 	args []string,
 ) (string, error) {
-	collection := args[1]
-	rawValues := args[2]
+	if len(args) != 2 {
+		return "", errors.New(
+			internal_errors.InvalidArgsCount("add", "2", len(args)),
+		)
+	}
+
+	collection := args[0]
+	rawValues := args[1]
 
 	openBracketIndex := strings.Index(rawValues, "(")
 	closeBracketIndex := strings.Index(rawValues, ")")
