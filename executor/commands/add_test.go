@@ -124,7 +124,7 @@ func TestInvalidArgsCount(t *testing.T) {
 	result, err := Add(strings.Split("invalid_collection invalid_arg (adam)", " "))
 
 	if err == nil {
-		t.Fatal("calling 'add' command with invalid args count is not prevented")
+		t.Fatal("calling 'add' command with unexpected args count is not prevented")
 	}
 
 	if result != "" {
