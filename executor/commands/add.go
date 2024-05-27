@@ -13,7 +13,7 @@ import (
 )
 
 func Add(
-	// example args slice: "tx (adam;20)" or "src (adam)"
+	// example args slices: [tx (adam;20)] or [src (adam)]
 	args []string,
 ) (string, error) {
 	if len(args) != 2 {
