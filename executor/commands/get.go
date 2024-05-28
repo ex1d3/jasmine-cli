@@ -8,16 +8,21 @@ import (
 )
 
 func Get(args []string) ([]string, error) {
-	collection := args[0]
 	params := GetParams{}
 
-	argsLen := len(args)
-
-	if argsLen < 1 || argsLen > 2 {
+	if len(args) != 1 && len(args) != 2 {
 		return []string{}, errors.New(
-			internal_errors.InvalidArgsCount("add", "2", len(args)),
+			internal_errors.InvalidArgsCount("get", "2", len(args)),
 		)
 	}
+
+	if args[0] == " " {
+		return []string{}, errors.New(
+			internal_errors.InvalidArgsCount("get", "2", len(args)-1),
+		)
+	}
+
+	collection := args[0]
 
 	if len(args) == 2 {
 		params.Target = args[1]
@@ -34,11 +39,9 @@ func Get(args []string) ([]string, error) {
 		}
 	default:
 		{
-			internal_errors.InvalidCollection(collection)
+			return []string{}, errors.New(internal_errors.InvalidCollection(collection))
 		}
 	}
-
-	return []string{}, nil
 }
 
 type GetParams struct {
@@ -46,19 +49,24 @@ type GetParams struct {
 }
 
 func getSrc(params GetParams) ([]string, error) {
+	srcStorage := storage.Src.GetStorage()
+
 	if params.Target == "" {
-		srcs := make([]string, len(storage.Src))
+		srcs := make([]string, len(srcStorage))
 		i := 0
 
-		for k := range storage.Src {
-			srcs[i] = k
+		for k, v := range srcStorage {
+			if v {
+				srcs[i] = k
+			}
+
 			i++
 		}
 
 		return srcs, nil
 	}
 
-	if !storage.Src[params.Target] {
+	if !storage.Src.Get(params.Target) {
 		return []string{}, nil
 	}
 
@@ -66,11 +74,13 @@ func getSrc(params GetParams) ([]string, error) {
 }
 
 func getTx(params GetParams) ([]string, error) {
+	txStorage := storage.Tx
+
 	if params.Target == "" {
-		txs := make([]string, len(storage.Tx))
+		txs := make([]string, len(txStorage.GetStorage()))
 		i := 0
 
-		for k, v := range storage.Tx {
+		for k, v := range txStorage.GetStorage() {
 			txs[i] = v.ToStr(k)
 			i++
 		}
@@ -78,7 +88,7 @@ func getTx(params GetParams) ([]string, error) {
 		return txs, nil
 	}
 
-	if tx, ok := storage.Tx[params.Target]; !ok {
+	if tx := txStorage.Get(params.Target); tx == nil {
 		return []string{}, nil
 	} else {
 		return []string{tx.ToStr(params.Target)}, nil

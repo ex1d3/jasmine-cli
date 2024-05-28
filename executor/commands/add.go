@@ -69,7 +69,8 @@ func addSrc(values []string) (string, error) {
 	}
 
 	name := values[0]
-	storage.Src[name] = true
+
+	storage.Src.Set(name, true)
 
 	return name, nil
 }
@@ -88,14 +89,16 @@ func addTx(values []string) (string, error) {
 		return "", errors.New(invalidElementForTx("amount", amount))
 	}
 
-	if !storage.Src[source] {
+	if !storage.Src.Get(source) {
 		return "", errors.New(invalidElementForTx("source", source))
 	}
 
-	id := strconv.FormatInt(time.Now().UnixMicro(), 10)
-	storage.Tx[id] = domain.NewTx(source, float32(amount))
+	txStorage := storage.Tx
 
-	return storage.Tx[id].ToStr(id), nil
+	id := strconv.FormatInt(time.Now().UnixMicro(), 10)
+	txStorage.Set(id, domain.NewTx(source, float32(amount)))
+
+	return txStorage.Get(id).ToStr(id), nil
 }
 
 func invalidValuesAmount(collection string, expected int, received int) string {

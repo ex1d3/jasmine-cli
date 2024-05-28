@@ -8,12 +8,13 @@ import (
 )
 
 func TestGetAllTxs(t *testing.T) {
-	storage.ClearTx()
+	txStorage := storage.Tx
+	txStorage.Unload()
 
-	storage.Src["adam"] = true
+	storage.Src.Set("adam", true)
 
-	storage.Tx["1"] = domain.NewTx("adam", 200)
-	storage.Tx["2"] = domain.NewTx("adam", 30)
+	txStorage.Set("1", domain.NewTx("adam", 200))
+	txStorage.Set("2", domain.NewTx("adam", 30))
 
 	txs, err := Get(strings.Split("tx", " "))
 
@@ -25,8 +26,8 @@ func TestGetAllTxs(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	firstTx := storage.Tx["1"].ToStr("1")
-	secondTx := storage.Tx["2"].ToStr("2")
+	firstTx := txStorage.Get("1").ToStr("1")
+	secondTx := txStorage.Get("2").ToStr("2")
 
 	for _, tx := range txs {
 		if tx != firstTx &&
@@ -39,8 +40,8 @@ func TestGetAllTxs(t *testing.T) {
 func TestGetExistingTx(t *testing.T) {
 	txId := "3"
 
-	storage.Src["ben"] = true
-	storage.Tx[txId] = domain.NewTx("ben", 20)
+	storage.Src.Set("ben", true)
+	storage.Tx.Set(txId, domain.NewTx("ben", 20))
 
 	txs, err := Get(strings.Split("tx 3", " "))
 
@@ -52,13 +53,13 @@ func TestGetExistingTx(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	if txs[0] != storage.Tx[txId].ToStr(txId) {
+	if txs[0] != storage.Tx.Get(txId).ToStr(txId) {
 		t.Fatal("unexpected return value")
 	}
 }
 
 func TestGetNonExistingTx(t *testing.T) {
-	storage.ClearTx()
+	storage.Tx.Unload()
 
 	txs, err := Get(strings.Split("tx 1", " "))
 
@@ -72,10 +73,11 @@ func TestGetNonExistingTx(t *testing.T) {
 }
 
 func TestGetAllSrcs(t *testing.T) {
-	storage.ClearSrc()
+	srcStorage := storage.Src
 
-	storage.Src["adam"] = true
-	storage.Src["ben"] = true
+	srcStorage.Unload()
+	srcStorage.Set("adam", true)
+	srcStorage.Set("ben", true)
 
 	srcs, err := Get(strings.Split("src", " "))
 
@@ -95,9 +97,10 @@ func TestGetAllSrcs(t *testing.T) {
 }
 
 func TestGetExistingSrc(t *testing.T) {
-	storage.ClearSrc()
+	srcStorage := storage.Src
 
-	storage.Src["adam"] = true
+	srcStorage.Unload()
+	srcStorage.Set("adam", true)
 
 	src, err := Get(strings.Split("src adam", " "))
 
@@ -115,7 +118,7 @@ func TestGetExistingSrc(t *testing.T) {
 }
 
 func TestGetNonExistingSrc(t *testing.T) {
-	storage.ClearSrc()
+	storage.Src.Unload()
 
 	src, err := Get(strings.Split("src adam", " "))
 

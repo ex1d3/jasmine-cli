@@ -38,25 +38,29 @@ func Del(args []string) (string, error) {
 }
 
 func delSrc(target string) (string, error) {
-	if !storage.Src[target] {
+	srcStorage := storage.Src
+
+	if !srcStorage.Get(target) {
 		return "", errors.New(
 			invalidTargetForCollection(target, collections.SRC),
 		)
 	}
 
-	delete(storage.Src, target)
+	srcStorage.Delete(target)
 
 	return storage.NullStoragePointer(target), nil
 }
 
 func delTx(target string) (string, error) {
-	if _, ok := storage.Tx[target]; !ok {
+	txStorage := storage.Tx
+
+	if tx := txStorage.Get(target); tx == nil {
 		return "", errors.New(
 			invalidTargetForCollection(target, collections.TX),
 		)
 	}
 
-	delete(storage.Tx, target)
+	txStorage.Delete(target)
 
 	return storage.NullStoragePointer(target), nil
 }

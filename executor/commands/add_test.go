@@ -17,13 +17,14 @@ func TestAddValidSrc(t *testing.T) {
 		t.Fatal("unexpected return value")
 	}
 
-	if !storage.Src["adam"] {
+	if !storage.Src.Get("adam") {
 		t.Fatal("source is not inserted into storage")
 	}
 }
 
 func TestAddValidTx(t *testing.T) {
-	storage.Src["adam"] = true
+	srcStorage := storage.Src
+	srcStorage.Set("adam", true)
 
 	result, err := Add(strings.Split("tx (adam;200)", " "))
 
@@ -37,7 +38,7 @@ func TestAddValidTx(t *testing.T) {
 
 	id := strings.Split(result, " ")[0]
 
-	if _, ok := storage.Tx[id]; !ok {
+	if tx := storage.Tx.Get(id); tx == nil {
 		t.Fatal("transaction is not inserted into storage")
 	}
 }
