@@ -20,11 +20,11 @@ func Get(args []string) ([]interface{}, error) {
 	switch collection {
 	case collections.SRC:
 		{
-			return execute(target, storage.Src)
+			return executeGet(target, storage.Src)
 		}
 	case collections.TX:
 		{
-			return execute(target, storage.Tx)
+			return executeGet(target, storage.Tx)
 		}
 	default:
 		{
@@ -35,7 +35,7 @@ func Get(args []string) ([]interface{}, error) {
 	}
 }
 
-func execute[T any](
+func executeGet[T any](
 	target string,
 	entityStorage storage.Storage[string, *T],
 ) ([]interface{}, error) {

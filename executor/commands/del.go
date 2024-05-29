@@ -9,9 +9,9 @@ import (
 )
 
 // example args silces: [tx 1] or [src adam]
-func Del(args []string) ([]string, error) {
+func Del(args []string) ([]interface{}, error) {
 	if len(args) != 2 {
-		return []string{}, errors.New(
+		return []interface{}{}, errors.New(
 			internal_errors.InvalidArgsCount("del", "2", len(args)),
 		)
 	}
@@ -22,59 +22,40 @@ func Del(args []string) ([]string, error) {
 	switch collection {
 	case collections.SRC:
 		{
-			return delSrc(target)
+			return executeDel(target, storage.Src)
 		}
 	case collections.TX:
 		{
-			return delTx(target)
+			return executeDel(target, storage.Tx)
 		}
 	default:
 		{
-			return []string{}, errors.New(
+			return []interface{}{}, errors.New(
 				internal_errors.InvalidCollection(collection),
 			)
 		}
 	}
 }
 
-func delSrc(target string) ([]string, error) {
-	srcStorage := storage.Src
-
+func executeDel[T any](
+	target string,
+	entityStorage storage.Storage[string, *T],
+) ([]interface{}, error) {
 	if target == "*" {
-		srcStorage.Unload()
+		entityStorage.Unload()
 
-		return []string{}, nil
+		return []interface{}{}, nil
 	}
 
-	if srcStorage.Get(target) == nil {
-		return []string{}, errors.New(
+	if entity := entityStorage.Get(target); entity == nil {
+		return []interface{}{}, errors.New(
 			invalidTargetForCollection(target, collections.SRC),
 		)
+	} else {
+		entityStorage.Delete(target)
+		return []interface{}{entity}, nil
 	}
 
-	srcStorage.Delete(target)
-
-	return []string{storage.NullStoragePointer(target)}, nil
-}
-
-func delTx(target string) ([]string, error) {
-	txStorage := storage.Tx
-
-	if target == "*" {
-		txStorage.Unload()
-
-		return []string{}, nil
-	}
-
-	if tx := txStorage.Get(target); tx == nil {
-		return []string{}, errors.New(
-			invalidTargetForCollection(target, collections.TX),
-		)
-	}
-
-	txStorage.Delete(target)
-
-	return []string{storage.NullStoragePointer(target)}, nil
 }
 
 func invalidTargetForCollection(target string, collection string) string {

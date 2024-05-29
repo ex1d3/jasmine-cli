@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"jasmine-cli/domain"
 	"jasmine-cli/storage"
 	"strings"
@@ -53,8 +52,6 @@ func TestGetExistingTx(t *testing.T) {
 	if len(txs) != 1 {
 		t.Fatal("unexpected return value length")
 	}
-
-	fmt.Println(txs, tx)
 
 	if txs[0] != storage.Tx.Get(txId) {
 		t.Fatal("unexpected return value")
