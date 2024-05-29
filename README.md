@@ -22,7 +22,7 @@ go build
 
 Starting application itself
 ```
-./jasmine
+./jasmine-cli
 ```
 
 ## Running tests
