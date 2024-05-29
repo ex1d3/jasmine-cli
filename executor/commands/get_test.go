@@ -13,8 +13,8 @@ func TestGetAllTxs(t *testing.T) {
 
 	storage.Src.Set("adam", domain.NewSrc("adam"))
 
-	firstTx := domain.NewTx("adam", 200)
-	secondTx := domain.NewTx("adam", 30)
+	firstTx := domain.NewTx("1", "adam", 200)
+	secondTx := domain.NewTx("2", "adam", 30)
 
 	txStorage.Set("1", firstTx)
 	txStorage.Set("2", secondTx)
@@ -38,7 +38,7 @@ func TestGetAllTxs(t *testing.T) {
 
 func TestGetExistingTx(t *testing.T) {
 	txId := "3"
-	tx := domain.NewTx("ben", 20)
+	tx := domain.NewTx("1", "ben", 20)
 
 	storage.Src.Set("ben", domain.NewSrc("ben"))
 	storage.Tx.Set(txId, tx)
@@ -134,5 +134,29 @@ func TestGetNonExistingSrc(t *testing.T) {
 
 	if len(src) != 0 {
 		t.Fatal("unexpected return value length")
+	}
+}
+
+func TestGetWithUnexpectedArgsCount(t *testing.T) {
+	result, err := Get(strings.Split("abc abc abc", " "))
+
+	if err == nil {
+		t.Fatal("call with unexpected args count not pervented")
+	}
+
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
+	}
+}
+
+func TestGetFromNonexistingCollection(t *testing.T) {
+	result, err := Get(strings.Split("abc abc", " "))
+
+	if err == nil {
+		t.Fatal("call to non existing collection not pervented")
+	}
+
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
 	}
 }
