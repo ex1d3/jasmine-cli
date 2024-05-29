@@ -3,9 +3,9 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"nolono-cli/executor/collections"
-	"nolono-cli/executor/commands/internal_errors"
-	"nolono-cli/storage"
+	"jasmine-cli/executor/collections"
+	"jasmine-cli/executor/commands/internal_errors"
+	"jasmine-cli/storage"
 )
 
 // example args silces: [tx 1] or [src adam]

@@ -2,9 +2,10 @@ package commands
 
 import (
 	"errors"
-	"nolono-cli/executor/collections"
-	"nolono-cli/executor/commands/internal_errors"
-	"nolono-cli/storage"
+	"jasmine-cli/domain"
+	"jasmine-cli/executor/collections"
+	"jasmine-cli/executor/commands/internal_errors"
+	"jasmine-cli/storage"
 )
 
 func Get(args []string) ([]string, error) {

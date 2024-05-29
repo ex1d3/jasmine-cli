@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"nolono-cli/domain"
-	"nolono-cli/storage"
+	"jasmine-cli/domain"
+	"jasmine-cli/storage"
 	"strings"
 	"testing"
 )
