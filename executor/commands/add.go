@@ -9,7 +9,6 @@ import (
 	"jasmine-cli/storage"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func Add(
@@ -70,7 +69,7 @@ func addSrc(values []string) (string, error) {
 
 	name := values[0]
 
-	storage.Src.Set(name, true)
+	storage.Src.Set(name, domain.NewSrc(name))
 
 	return name, nil
 }
@@ -89,13 +88,13 @@ func addTx(values []string) (string, error) {
 		return "", errors.New(invalidElementForTx("amount", amount))
 	}
 
-	if !storage.Src.Get(source) {
+	if storage.Src.Get(source) == nil {
 		return "", errors.New(invalidElementForTx("source", source))
 	}
 
 	txStorage := storage.Tx
 
-	id := strconv.FormatInt(time.Now().UnixMicro(), 10)
+	id := strconv.Itoa(len(txStorage.GetStorage()) + 1)
 	txStorage.Set(id, domain.NewTx(source, float32(amount)))
 
 	return txStorage.Get(id).ToStr(id), nil

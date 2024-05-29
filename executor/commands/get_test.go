@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"jasmine-cli/domain"
 	"jasmine-cli/storage"
 	"strings"
@@ -11,12 +12,15 @@ func TestGetAllTxs(t *testing.T) {
 	txStorage := storage.Tx
 	txStorage.Unload()
 
-	storage.Src.Set("adam", true)
+	storage.Src.Set("adam", domain.NewSrc("adam"))
 
-	txStorage.Set("1", domain.NewTx("adam", 200))
-	txStorage.Set("2", domain.NewTx("adam", 30))
+	firstTx := domain.NewTx("adam", 200)
+	secondTx := domain.NewTx("adam", 30)
 
-	txs, err := Get(strings.Split("tx", " "))
+	txStorage.Set("1", firstTx)
+	txStorage.Set("2", secondTx)
+
+	txs, err := Get(strings.Split("tx *", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -26,12 +30,8 @@ func TestGetAllTxs(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	firstTx := txStorage.Get("1").ToStr("1")
-	secondTx := txStorage.Get("2").ToStr("2")
-
 	for _, tx := range txs {
-		if tx != firstTx &&
-			tx != secondTx {
+		if tx != firstTx && tx != secondTx {
 			t.Fatal("unexpected return value")
 		}
 	}
@@ -39,9 +39,10 @@ func TestGetAllTxs(t *testing.T) {
 
 func TestGetExistingTx(t *testing.T) {
 	txId := "3"
+	tx := domain.NewTx("ben", 20)
 
-	storage.Src.Set("ben", true)
-	storage.Tx.Set(txId, domain.NewTx("ben", 20))
+	storage.Src.Set("ben", domain.NewSrc("ben"))
+	storage.Tx.Set(txId, tx)
 
 	txs, err := Get(strings.Split("tx 3", " "))
 
@@ -53,7 +54,9 @@ func TestGetExistingTx(t *testing.T) {
 		t.Fatal("unexpected return value length")
 	}
 
-	if txs[0] != storage.Tx.Get(txId).ToStr(txId) {
+	fmt.Println(txs, tx)
+
+	if txs[0] != storage.Tx.Get(txId) {
 		t.Fatal("unexpected return value")
 	}
 }
@@ -76,10 +79,14 @@ func TestGetAllSrcs(t *testing.T) {
 	srcStorage := storage.Src
 
 	srcStorage.Unload()
-	srcStorage.Set("adam", true)
-	srcStorage.Set("ben", true)
 
-	srcs, err := Get(strings.Split("src", " "))
+	adam := domain.NewSrc("adam")
+	ben := domain.NewSrc("ben")
+
+	srcStorage.Set("adam", adam)
+	srcStorage.Set("ben", ben)
+
+	srcs, err := Get(strings.Split("src *", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
@@ -90,7 +97,7 @@ func TestGetAllSrcs(t *testing.T) {
 	}
 
 	for _, src := range srcs {
-		if src != "adam" && src != "ben" {
+		if src != adam && src != ben {
 			t.Fatal("unexpected return value")
 		}
 	}
@@ -100,19 +107,21 @@ func TestGetExistingSrc(t *testing.T) {
 	srcStorage := storage.Src
 
 	srcStorage.Unload()
-	srcStorage.Set("adam", true)
 
-	src, err := Get(strings.Split("src adam", " "))
+	adam := domain.NewSrc("adam")
+
+	srcStorage.Set("adam", adam)
+	srcs, err := Get(strings.Split("src adam", " "))
 
 	if err != nil {
 		t.Fatal("unexpected error")
 	}
 
-	if len(src) != 1 {
+	if len(srcs) != 1 {
 		t.Fatal("unexpected return value length")
 	}
 
-	if src[0] != "adam" {
+	if srcs[0] != adam {
 		t.Fatal("unexpected return value")
 	}
 }

@@ -9,9 +9,9 @@ import (
 )
 
 // example args silces: [tx 1] or [src adam]
-func Del(args []string) (string, error) {
+func Del(args []string) ([]string, error) {
 	if len(args) != 2 {
-		return "", errors.New(
+		return []string{}, errors.New(
 			internal_errors.InvalidArgsCount("del", "2", len(args)),
 		)
 	}
@@ -30,39 +30,51 @@ func Del(args []string) (string, error) {
 		}
 	default:
 		{
-			return "", errors.New(
+			return []string{}, errors.New(
 				internal_errors.InvalidCollection(collection),
 			)
 		}
 	}
 }
 
-func delSrc(target string) (string, error) {
+func delSrc(target string) ([]string, error) {
 	srcStorage := storage.Src
 
-	if !srcStorage.Get(target) {
-		return "", errors.New(
+	if target == "*" {
+		srcStorage.Unload()
+
+		return []string{}, nil
+	}
+
+	if srcStorage.Get(target) == nil {
+		return []string{}, errors.New(
 			invalidTargetForCollection(target, collections.SRC),
 		)
 	}
 
 	srcStorage.Delete(target)
 
-	return storage.NullStoragePointer(target), nil
+	return []string{storage.NullStoragePointer(target)}, nil
 }
 
-func delTx(target string) (string, error) {
+func delTx(target string) ([]string, error) {
 	txStorage := storage.Tx
 
+	if target == "*" {
+		txStorage.Unload()
+
+		return []string{}, nil
+	}
+
 	if tx := txStorage.Get(target); tx == nil {
-		return "", errors.New(
+		return []string{}, errors.New(
 			invalidTargetForCollection(target, collections.TX),
 		)
 	}
 
 	txStorage.Delete(target)
 
-	return storage.NullStoragePointer(target), nil
+	return []string{storage.NullStoragePointer(target)}, nil
 }
 
 func invalidTargetForCollection(target string, collection string) string {

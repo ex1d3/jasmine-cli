@@ -18,14 +18,14 @@ func TestAddValidSrc(t *testing.T) {
 		t.Fatal("unexpected return value")
 	}
 
-	if !storage.Src.Get("adam") {
+	if storage.Src.Get("adam") == nil {
 		t.Fatal("source is not inserted into storage")
 	}
 }
 
 func TestAddValidTx(t *testing.T) {
 	srcStorage := storage.Src
-	srcStorage.Set("adam", true)
+	srcStorage.Set("adam", domain.NewSrc("adam"))
 
 	result, err := Add(strings.Split("tx (adam;200)", " "))
 

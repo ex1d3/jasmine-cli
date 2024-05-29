@@ -12,8 +12,8 @@ func TestDelNonExistingSrc(t *testing.T) {
 		t.Fatal("deletion of non existing src not pervented")
 	}
 
-	if result != "" {
-		t.Fatal("unexpected return value")
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
 	}
 }
 
@@ -24,8 +24,8 @@ func TestDelNonExistingTx(t *testing.T) {
 		t.Fatal("deletion of non existing src not pervented")
 	}
 
-	if result != "" {
-		t.Fatal("unexpected return value")
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
 	}
 }
 
@@ -39,8 +39,8 @@ func TestDelElementFromNonexistingCollection(t *testing.T) {
 		)
 	}
 
-	if result != "" {
-		t.Fatal("unexpected return value")
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
 	}
 }
 
@@ -51,7 +51,7 @@ func TestDelWithUnexpectedArgs(t *testing.T) {
 		t.Fatal("calling 'del' command with unexpecting args is not pervented")
 	}
 
-	if result != "" {
-		t.Fatal("unexpected return value")
+	if len(result) != 0 {
+		t.Fatal("unexpected return value len")
 	}
 }

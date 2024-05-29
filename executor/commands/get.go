@@ -2,64 +2,51 @@ package commands
 
 import (
 	"errors"
-	"jasmine-cli/domain"
 	"jasmine-cli/executor/collections"
 	"jasmine-cli/executor/commands/internal_errors"
 	"jasmine-cli/storage"
 )
 
-func Get(args []string) ([]string, error) {
-	params := GetParams{}
-
-	if len(args) != 1 && len(args) != 2 {
-		return []string{}, errors.New(
+func Get(args []string) ([]interface{}, error) {
+	if len(args) != 2 {
+		return []interface{}{}, errors.New(
 			internal_errors.InvalidArgsCount("get", "2", len(args)),
 		)
 	}
 
-	if args[0] == " " {
-		return []string{}, errors.New(
-			internal_errors.InvalidArgsCount("get", "2", len(args)-1),
-		)
-	}
-
 	collection := args[0]
-
-	if len(args) == 2 {
-		params.Target = args[1]
-	}
+	target := args[1]
 
 	switch collection {
 	case collections.SRC:
 		{
-			return getSrc(params)
+			return execute(target, storage.Src)
 		}
 	case collections.TX:
 		{
-			return getTx(params)
+			return execute(target, storage.Tx)
 		}
 	default:
 		{
-			return []string{}, errors.New(internal_errors.InvalidCollection(collection))
+			return []interface{}{}, errors.New(
+				internal_errors.InvalidCollection(collection),
+			)
 		}
 	}
 }
 
-type GetParams struct {
-	Target string
-}
+func execute[T any](
+	target string,
+	entityStorage storage.Storage[string, *T],
+) ([]interface{}, error) {
+	rawStorage := entityStorage.GetStorage()
 
-func getSrc(params GetParams) ([]string, error) {
-	srcStorage := storage.Src.GetStorage()
-
-	if params.Target == "" {
-		srcs := make([]string, len(srcStorage))
+	if target == "*" {
+		srcs := make([]interface{}, len(rawStorage))
 		i := 0
 
-		for k, v := range srcStorage {
-			if v {
-				srcs[i] = k
-			}
+		for _, v := range rawStorage {
+			srcs[i] = v
 
 			i++
 		}
@@ -67,31 +54,9 @@ func getSrc(params GetParams) ([]string, error) {
 		return srcs, nil
 	}
 
-	if !storage.Src.Get(params.Target) {
-		return []string{}, nil
-	}
-
-	return []string{params.Target}, nil
-}
-
-func getTx(params GetParams) ([]string, error) {
-	txStorage := storage.Tx
-
-	if params.Target == "" {
-		txs := make([]string, len(txStorage.GetStorage()))
-		i := 0
-
-		for k, v := range txStorage.GetStorage() {
-			txs[i] = v.ToStr(k)
-			i++
-		}
-
-		return txs, nil
-	}
-
-	if tx := txStorage.Get(params.Target); tx == nil {
-		return []string{}, nil
+	if entity := entityStorage.Get(target); entity == nil {
+		return []interface{}{}, nil
 	} else {
-		return []string{tx.ToStr(params.Target)}, nil
+		return []interface{}{entity}, nil
 	}
 }
