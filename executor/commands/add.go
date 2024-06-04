@@ -95,9 +95,9 @@ func addTx(values []string) (string, error) {
 	txStorage := storage.Tx
 
 	id := strconv.Itoa(len(txStorage.GetStorage()) + 1)
-	txStorage.Set(id, domain.NewTx(source, float32(amount)))
+	txStorage.Set(id, domain.NewTx(id, source, float32(amount)))
 
-	return txStorage.Get(id).ToStr(id), nil
+	return txStorage.Get(id).ToStr(), nil
 }
 
 func invalidValuesAmount(collection string, expected int, received int) string {
