@@ -3,12 +3,13 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"jasmine-cli/domain"
 	"jasmine-cli/executor/collections"
 	"jasmine-cli/executor/commands/internal_errors"
 	"jasmine-cli/storage"
 )
 
-// example args silces: [tx 1] or [src adam]
+// Del example args slices: [tx 1] or [src adam]
 func Del(args []string) ([]interface{}, error) {
 	if len(args) != 2 {
 		return []interface{}{}, errors.New(
@@ -22,11 +23,11 @@ func Del(args []string) ([]interface{}, error) {
 	switch collection {
 	case collections.SRC:
 		{
-			return executeDel(target, storage.Src)
+			return executeDel[domain.Src](target, storage.Src)
 		}
 	case collections.TX:
 		{
-			return executeDel(target, storage.Tx)
+			return executeDel[domain.Tx](target, storage.Tx)
 		}
 	default:
 		{

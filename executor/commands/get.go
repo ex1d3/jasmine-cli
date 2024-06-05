@@ -2,6 +2,7 @@ package commands
 
 import (
 	"errors"
+	"jasmine-cli/domain"
 	"jasmine-cli/executor/collections"
 	"jasmine-cli/executor/commands/internal_errors"
 	"jasmine-cli/storage"
@@ -20,11 +21,11 @@ func Get(args []string) ([]interface{}, error) {
 	switch collection {
 	case collections.SRC:
 		{
-			return executeGet(target, storage.Src)
+			return executeGet[domain.Src](target, storage.Src)
 		}
 	case collections.TX:
 		{
-			return executeGet(target, storage.Tx)
+			return executeGet[domain.Tx](target, storage.Tx)
 		}
 	default:
 		{
