@@ -1,17 +1,20 @@
 package internal_errors
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func InvalidArgsCount(
-	cmd string,
-	// for support "from x to y" statements in errors
-	expected string,
-	received int,
-) string {
+type InvalidArgsCountError struct {
+	Command string
+	Want    int
+	Have    int
+}
+
+func (e *InvalidArgsCountError) Error() string {
 	return fmt.Sprintf(
-		"invalid args count for '%s' command (expected: %s, received: %d)",
-		cmd,
-		expected,
-		received,
+		"invalid args count for command '%s'; want: %d, have: %d",
+		e.Command,
+		e.Want,
+		e.Have,
 	)
 }

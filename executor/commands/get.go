@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"jasmine-cli/domain"
 	"jasmine-cli/executor/collections"
 	"jasmine-cli/executor/commands/internal_errors"
@@ -10,9 +9,11 @@ import (
 
 func Get(args []string) ([]interface{}, error) {
 	if len(args) != 2 {
-		return []interface{}{}, errors.New(
-			internal_errors.InvalidArgsCount("get", "2", len(args)),
-		)
+		return []interface{}{}, &internal_errors.InvalidArgsCountError{
+			Command: "get",
+			Want:    2,
+			Have:    len(args),
+		}
 	}
 
 	collection := args[0]
@@ -29,9 +30,9 @@ func Get(args []string) ([]interface{}, error) {
 		}
 	default:
 		{
-			return []interface{}{}, errors.New(
-				internal_errors.InvalidCollection(collection),
-			)
+			return []interface{}{}, &internal_errors.InvalidCollectionError{
+				Collection: collection,
+			}
 		}
 	}
 }
@@ -43,16 +44,16 @@ func executeGet[T any](
 	rawStorage := entityStorage.GetStorage()
 
 	if target == "*" {
-		srcs := make([]interface{}, len(rawStorage))
+		entities := make([]interface{}, len(rawStorage))
 		i := 0
 
 		for _, v := range rawStorage {
-			srcs[i] = v
+			entities[i] = v
 
 			i++
 		}
 
-		return srcs, nil
+		return entities, nil
 	}
 
 	if entity := entityStorage.Get(target); entity == nil {

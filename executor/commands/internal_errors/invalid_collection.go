@@ -2,6 +2,10 @@ package internal_errors
 
 import "fmt"
 
-func InvalidCollection(collection string) string {
-	return fmt.Sprintf("Invalid collection (%s)", collection)
+type InvalidCollectionError struct {
+	Collection string
+}
+
+func (e *InvalidCollectionError) Error() string {
+	return fmt.Sprintf("invalid collection '%s'", e.Collection)
 }

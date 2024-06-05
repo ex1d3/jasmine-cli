@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"errors"
-	"fmt"
 	"jasmine-cli/domain"
 	"jasmine-cli/executor/collections"
 	"jasmine-cli/executor/commands/internal_errors"
@@ -16,9 +14,11 @@ func Add(
 	args []string,
 ) (string, error) {
 	if len(args) != 2 {
-		return "", errors.New(
-			internal_errors.InvalidArgsCount("add", "2", len(args)),
-		)
+		return "", &internal_errors.InvalidArgsCountError{
+			Command: "add",
+			Want:    2,
+			Have:    len(args),
+		}
 	}
 
 	collection := args[0]
@@ -28,19 +28,13 @@ func Add(
 	closeBracketIndex := strings.Index(rawValues, ")")
 
 	if (openBracketIndex == -1) || (closeBracketIndex == -1) {
-		return "", errors.New(
-			"object constructor not found",
-		)
+		return "", &internal_errors.ObjectConstructorNotFoundError{}
 	}
 
 	values := strings.Split(
 		rawValues[openBracketIndex+1:closeBracketIndex],
 		";",
 	)
-
-	if len(values) == 1 && values[0] == "" {
-		return "", errors.New("object constructor is empty")
-	}
 
 	switch collection {
 	case collections.SRC:
@@ -53,18 +47,26 @@ func Add(
 		}
 	default:
 		{
-			return "", errors.New(
-				internal_errors.InvalidCollection(collection),
-			)
+			return "", &internal_errors.InvalidCollectionError{
+				Collection: collection,
+			}
 		}
 	}
 }
 
 func addSrc(values []string) (string, error) {
 	if len(values) != 1 {
-		return "", errors.New(
-			invalidValuesAmount(collections.SRC, 1, len(values)),
-		)
+		return "", &internal_errors.InvalidObjectConstructorLengthError{
+			Have: len(values),
+			Want: 1,
+		}
+	}
+
+	if values[0] == "" {
+		return "", &internal_errors.InvalidObjectConstructorLengthError{
+			Have: 0,
+			Want: 1,
+		}
 	}
 
 	name := values[0]
@@ -76,20 +78,28 @@ func addSrc(values []string) (string, error) {
 
 func addTx(values []string) (string, error) {
 	if len(values) != 2 {
-		return "", errors.New(
-			invalidValuesAmount(collections.TX, 2, len(values)),
-		)
+		return "", &internal_errors.InvalidObjectConstructorLengthError{
+			Have: len(values),
+			Want: 2,
+		}
 	}
 
 	source := values[0]
+
+	if storage.Src.Get(source) == nil {
+		return "", &internal_errors.InvalidObjectConstructorValueError{
+			Index: 1,
+			Value: source,
+		}
+	}
+
 	amount, err := strconv.ParseFloat(values[1], 32)
 
 	if err != nil {
-		return "", errors.New(invalidElementForTx("amount", amount))
-	}
-
-	if storage.Src.Get(source) == nil {
-		return "", errors.New(invalidElementForTx("source", source))
+		return "", &internal_errors.InvalidObjectConstructorValueError{
+			Index: 1,
+			Value: values[1],
+		}
 	}
 
 	txStorage := storage.Tx
@@ -98,17 +108,4 @@ func addTx(values []string) (string, error) {
 	txStorage.Set(id, domain.NewTx(id, source, float32(amount)))
 
 	return txStorage.Get(id).ToStr(), nil
-}
-
-func invalidValuesAmount(collection string, expected int, received int) string {
-	return fmt.Sprintf(
-		"invalid values amount for '%s' collection (expected: %d received: %d)",
-		collection,
-		expected,
-		received,
-	)
-}
-
-func invalidElementForTx(elem string, value any) string {
-	return fmt.Sprintf("invalid %s for tx (%s)", elem, value)
 }
